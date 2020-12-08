@@ -24,13 +24,19 @@ app.get('/location', function(req, res){
     res.send(instanceOfLocation);
 });
 
-    // const locationData = require('./data/location.json')}.then(parse =>{ 
-    //     console.log(locationData);
-    //     parse.forEach(locationObject => new Location (locationData));
-    //     // const instanceOfLocation = new Location(locationData);
-    //     console.log(Location);
-    //     res.send(instanceOfLocation);
-    // })
+const weatherDataArray = [];
+app.get('/weather', function(req, res){
+    const weatherData = require('./data/weather.json');
+    // console.log(weatherData.data);
+    weatherData.data.forEach(instance=> {
+        weatherDataArray.push(new Weather(instance));
+        // console.log(instance.weather.description);
+        // console.log(instance.valid_date);
+    });
+    // console.log(weatherDataArray);
+    res.send(weatherDataArray);
+});
+
 
 
 function Location(location, searchQuery = "seattle"){
@@ -38,6 +44,11 @@ function Location(location, searchQuery = "seattle"){
     this.formatted_query = location.display_name;
     this.latitude = location.lat;
     this.longitude = location.lon;
+}
+
+function Weather(weather){
+    this.forecast = weather.weather.description;
+    this.time = weather.valid_date;
 }
 
 
