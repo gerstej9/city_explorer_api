@@ -1,34 +1,34 @@
 # city_explorer_api
 
 
-**Author**: Your Name Goes Here
-**Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
+**Author**: James Gerstenberger
+**Version**: 1.0.0 
 
 ## Overview
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
+The City Explorer is a web page that allows the user to input a city and in turn receive geographic information such as a map and latitude and longitude. The explorer app also returns weather data and restaurants information for the location
 
 ## Getting Started
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+To get this app running one must create a backend platform that will intake a city search query and return the above specified information
 
 ## Architecture
-<!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
+This program is utilizing JavaScript and API calls to yelp, locationIQ and a weather service to retrieve information. It is employing Heroku, Node.js, express, dotenv, and cors to run.
 
 ## Change Log
-<!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
 
-01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.
+12-07-2020 5:30pm - Application now heroku deployed app able to be utilized as backend for City Explorer frontend webpage. Deployed app is able to intak a query and return pre-populated information from .json files.
 
-## Credits and Collaborations
-<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
--->
+ ## Credits and Collaborations
+Codefellows TA's Bade, Brai, Chance and Skyler
+Fellow Students Nick Abramowicz, Alan Hung, William Moreno
 
 
-Number and name of feature: ________________________________
 
-Estimate of time needed to complete: _____
+Number and name of feature: Day 1: 4 features; Deployed Heroku App, location constructor and path, weather constructor and path, error message on invalid query.
 
-Start time: _____
+Estimate of time needed to complete: 6 hours
 
-Finish time: _____
+Start time: 2:00PM
 
-Actual time needed to complete: _____
+Finish time: 5:30PM
+
+Actual time needed to complete: 3.5 Hours
