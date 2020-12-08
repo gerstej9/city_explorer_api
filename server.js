@@ -18,15 +18,15 @@ app.get('/location', function(req, res){
     res.send(instanceOfLocation);
 });
 
-const weatherDataArray = [];
+
 app.get('/weather', function(req, res){
+    const weatherDataArray = [];
     const weatherData = require('./data/weather.json');
     weatherData.data.forEach(instance=> {
         weatherDataArray.push(new Weather(instance));
     });
     res.send(weatherDataArray);
 });
-
 
 
 function Location(location, searchQuery = "seattle"){
