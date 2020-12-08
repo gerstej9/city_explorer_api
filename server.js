@@ -19,22 +19,16 @@ app.use(cors());
 
 app.get('/location', function(req, res){
     const locationData = require('./data/location.json');
-    console.log(locationData);
     const instanceOfLocation = new Location(locationData[0]);
-    console.log (instanceOfLocation);
     res.send(instanceOfLocation);
 });
 
 const weatherDataArray = [];
 app.get('/weather', function(req, res){
     const weatherData = require('./data/weather.json');
-    // console.log(weatherData.data);
     weatherData.data.forEach(instance=> {
         weatherDataArray.push(new Weather(instance));
-        // console.log(instance.weather.description);
-        // console.log(instance.valid_date);
     });
-    // console.log(weatherDataArray);
     res.send(weatherDataArray);
 });
 
