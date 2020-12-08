@@ -10,7 +10,6 @@ require('dotenv').config(); // configures variables from `.env`
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-app.use(express.static('./public'));
 
 // app.get("/home", function(req, res){
 //     res.send("./index.html");
@@ -50,6 +49,10 @@ function Weather(weather){
     this.forecast = weather.weather.description;
     this.time = weather.valid_date;
 }
+
+app.use('*', (request, response) => {
+    response.status(404).send('I am sorry, the city you have entered is invalid.');
+  });
 
 
 app.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
