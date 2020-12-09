@@ -14,20 +14,37 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 const DATABASE_URL = process.env.DATABASE_URL;
 
-app.use(cors());
-
 const client = new pg.Client(DATABASE_URL);
 client.on('error', error => console.error(error));
 
+app.use(cors());
+
 app.get('/location', function (req, res) {
-  const GEOCODE_API_KEY = process.env.GEOCODE_API;
-  const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${req.query.city}&format=json`;
-  superagent.get(url).then(returnInformation => {
-    const locationData = returnInformation.body[0];
-    const instanceOfLocation = new Location(locationData,req.query.city);
-    res.send(instanceOfLocation);
-  })
-    .catch(error => console.log(error));
+  client.query('SELECT * FROM location WHERE search_query=$1', [req.query.city])
+    .then(data => {
+      if (data.rows.length > 0) {
+        console.log(data.rows);
+        res.send(data.rows[0]);
+      } else {
+        const GEOCODE_API_KEY = process.env.GEOCODE_API;
+        const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${req.query.city}&format=json`;
+
+        superagent.get(url).then(returnInformation => {
+          const locationData = returnInformation.body[0];
+          const instanceOfLocation = new Location(locationData, req.query.city);
+          client.query(
+            `INSERT INTO location
+          (search_query, latitude, longitude)
+          VALUES ($1, $2, $3)`, [req.query.city, instanceOfLocation.latitude, instanceOfLocation.longitude])
+            .then(() => {
+              res.send(instanceOfLocation);
+
+            });
+
+        })
+          .catch(error => console.log(error));
+      }
+    });
 });
 
 
@@ -76,15 +93,15 @@ function Weather(weather) {
   this.time = weather.valid_date;
 }
 
-function Trail(trail){
+function Trail(trail) {
   this.name = trail.name;
   this.location = trail.location;
   this.length = trail.length;
   this.stars = trail.stars;
   this.summary = trail.summary;
-  this. trail_url = trail.url;
+  this.trail_url = trail.url;
   this.conditions = trail.conditionDetails || 'None Reported';
-  this.condition_date = trail.conditionDate.substring(1,10);
+  this.condition_date = trail.conditionDate.substring(1, 10);
   this.condition_time = trail.conditionDate.substring(10);
   this.star_votes = trail.starVotes;
 }
@@ -94,4 +111,8 @@ app.use('*', (request, response) => {
 });
 
 
-app.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
+client.connect()
+  .then(() => {
+    app.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
+  })
+  .catch(error => console.error(error));
