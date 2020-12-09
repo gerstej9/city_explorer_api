@@ -11,7 +11,7 @@ The City Explorer is a web page that allows the user to input a city and in turn
 To get this app running one must create a backend platform that will intake a city search query and return the above specified information
 
 ## Architecture
-This program is utilizing JavaScript and API calls to yelp, locationIQ and a weather service to retrieve information. It is employing Heroku, Node.js, express, dotenv, and cors to run.
+This program is utilizing JavaScript and API calls to yelp, locationIQ, Hiking Project, and WeatherBit to retrieve information. It is employing Heroku, Node.js, express, dotenv, and cors to run.
 
 ## Change Log
 
@@ -19,8 +19,7 @@ This program is utilizing JavaScript and API calls to yelp, locationIQ and a wea
 
  ## Credits and Collaborations
 Codefellows TA's Bade, Brai, Chance and Skyler
-Fellow Students Nick Abramowicz, Alan Hung, William Moreno
-
+Fellow Students Nick Abramowicz, Alan Hung, William Moreno, Nick Magruder
 
 
 Number and name of feature: Day 1: 4 features; Deployed Heroku App, location constructor and path, weather constructor and path, error message on invalid query.
@@ -32,3 +31,13 @@ Start time: 2:00PM
 Finish time: 5:30PM
 
 Actual time needed to complete: 3.5 Hours
+
+Number and name of feature: Day 2: 4 features; Utilize .map for object iteration, connect location query with API to Location IQ, Weatherbit and Hiking Project.
+
+Estimate of time needed to complete: 5 hours
+
+Start time: 2:00PM
+
+Finish time: 5:00PM
+
+Actual time needed to complete: 3 Hours
