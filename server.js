@@ -5,13 +5,19 @@
 const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
+const pg = require('pg');
 require('dotenv').config();
+
 
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+const DATABASE_URL = process.env.DATABASE_URL;
 
 app.use(cors());
+
+const client = new pg.Client(DATABASE_URL);
+client.on('error', error => console.error(error));
 
 app.get('/location', function (req, res) {
   const GEOCODE_API_KEY = process.env.GEOCODE_API;
@@ -77,7 +83,7 @@ function Trail(trail){
   this.stars = trail.stars;
   this.summary = trail.summary;
   this. trail_url = trail.url;
-  this.conditions = trail.conditionDetails || "None Reported";
+  this.conditions = trail.conditionDetails || 'None Reported';
   this.condition_date = trail.conditionDate.substring(1,10);
   this.condition_time = trail.conditionDate.substring(10);
   this.star_votes = trail.starVotes;
