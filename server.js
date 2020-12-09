@@ -17,8 +17,8 @@ app.get('/location', function (req, res) {
   const GEOCODE_API_KEY = process.env.GEOCODE_API;
   const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${req.query.city}&format=json`;
   superagent.get(url).then(returnInformation => {
-    const locationData = returnInformation.body;
-    const instanceOfLocation = new Location(locationData);
+    const locationData = returnInformation.body[0];
+    const instanceOfLocation = new Location(locationData,req.query.city);
     res.send(instanceOfLocation);
   })
     .catch(error => console.log(error));
@@ -26,17 +26,40 @@ app.get('/location', function (req, res) {
 
 
 app.get('/weather', function (req, res) {
-  const weatherDataArray = [];
-  const weatherData = require('./data/weather.json');
-  weatherData.data.forEach(instance => {
-    weatherDataArray.push(new Weather(instance));
-  });
-  res.send(weatherDataArray);
+  const WEATHER_API_KEY = process.env.WEATHER_API;
+  superagent.get('https://api.weatherbit.io/v2.0/forecast/daily')
+    .query({
+      key: WEATHER_API_KEY,
+      lat: req.query.latitude,
+      lon: req.query.longitude,
+      days: 8
+    })
+    .then(returnInformation => {
+      const weatherData = returnInformation.body;
+      const weatherDataArray = weatherData.data.map(instance => new Weather(instance));
+      res.send(weatherDataArray);
+    }).catch(error => console.log(error));
+});
+
+app.get('/trails', function (req, res) {
+  const TRAIL_API_KEY = process.env.TRAIL_API;
+  superagent.get('https://www.hikingproject.com/data/get-trails')
+    .query({
+      key: TRAIL_API_KEY,
+      lat: req.query.latitude,
+      lon: req.query.longitude,
+    })
+    .then(returnInformation => {
+      const trailData = returnInformation.body;
+      const trailDataArray = trailData.trails.map(instance => new Trail(instance));
+      res.send(trailDataArray);
+    }).catch(error => console.log(error));
 });
 
 
-function Location(location, searchQuery = 'seattle') {
-  this.search_query = searchQuery;
+
+function Location(location, search_query) {
+  this.search_query = search_query || 'seattle';
   this.formatted_query = location.display_name;
   this.latitude = location.lat;
   this.longitude = location.lon;
@@ -45,6 +68,19 @@ function Location(location, searchQuery = 'seattle') {
 function Weather(weather) {
   this.forecast = weather.weather.description;
   this.time = weather.valid_date;
+}
+
+function Trail(trail){
+  this.name = trail.name;
+  this.location = trail.location;
+  this.length = trail.length;
+  this.stars = trail.stars;
+  this.summary = trail.summary;
+  this. trail_url = trail.url;
+  this.conditions = trail.conditionDetails || "None Reported";
+  this.condition_date = trail.conditionDate.substring(1,10);
+  this.condition_time = trail.conditionDate.substring(10);
+  this.star_votes = trail.starVotes;
 }
 
 app.use('*', (request, response) => {
