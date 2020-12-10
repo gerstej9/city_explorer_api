@@ -20,7 +20,7 @@ client.on('error', error => console.error(error));
 app.use(cors());
 
 app.get('/location', function (req, res) {
-  try{client.query('SELECT * FROM location WHERE search_query=$1', [req.query.city])
+  client.query('SELECT * FROM location WHERE search_query=$1', [req.query.city])
     .then(data => {
       if (data.rows.length > 0) {
         console.log(data.rows);
@@ -42,14 +42,9 @@ app.get('/location', function (req, res) {
             });
 
         })
-
+          .catch(error => console.log(error));
       }
     });
-  }
-  catch(error) {
-    console.error(error);
-    res.status(404).send('I am sorry, the city you have entered is invalid.');
-  }
 });
 
 
@@ -84,6 +79,23 @@ app.get('/trails', function (req, res) {
     }).catch(error => console.log(error));
 });
 
+app.get('/movies', function (req, res) {
+  const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
+  superagent.get('https://api.themoviedb.org/3/movie/popular')
+    .query({
+      api_key: MOVIE_API_KEY,
+      language: 'en-US',
+      page : '1'
+    })
+    .then(returnInformation => {
+      const movieData = returnInformation.body.results;
+      const movieDataArray = movieData.map(instance => new Movie(instance));
+      res.send(movieDataArray);
+      // const trailData = returnInformation.body;
+      // const trailDataArray = trailData.trails.map(instance => new Trail(instance));
+      // res.send(trailDataArray);
+    }).catch(error => console.log(error));
+});
 
 
 function Location(location, search_query) {
@@ -111,9 +123,18 @@ function Trail(trail) {
   this.star_votes = trail.starVotes;
 }
 
-// app.use('*', (request, response) => {
-//   response.status(404).send('I am sorry, the city you have entered is invalid.');
-// });
+function Movie(movie) {
+  this.title = movie.original_title;
+  this. overview = movie.overview;
+  this. average_votes = movie.vote_average;
+  this.image_url = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+  this.popularity = movie.popularity;
+  this.released_on = movie.release_date;
+}
+
+app.use('*', (request, response) => {
+  response.status(404).send('I am sorry, the city you have entered is invalid.');
+});
 
 
 client.connect()
