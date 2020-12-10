@@ -20,7 +20,7 @@ client.on('error', error => console.error(error));
 app.use(cors());
 
 app.get('/location', function (req, res) {
-  client.query('SELECT * FROM location WHERE search_query=$1', [req.query.city])
+  try{client.query('SELECT * FROM location WHERE search_query=$1', [req.query.city])
     .then(data => {
       if (data.rows.length > 0) {
         console.log(data.rows);
@@ -42,9 +42,14 @@ app.get('/location', function (req, res) {
             });
 
         })
-          .catch(error => console.log(error));
+
       }
     });
+  }
+  catch(error) {
+    console.error(error);
+    res.status(404).send('I am sorry, the city you have entered is invalid.');
+  }
 });
 
 
@@ -106,9 +111,9 @@ function Trail(trail) {
   this.star_votes = trail.starVotes;
 }
 
-app.use('*', (request, response) => {
-  response.status(404).send('I am sorry, the city you have entered is invalid.');
-});
+// app.use('*', (request, response) => {
+//   response.status(404).send('I am sorry, the city you have entered is invalid.');
+// });
 
 
 client.connect()
