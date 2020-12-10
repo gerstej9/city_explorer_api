@@ -6,6 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const superagent = require('superagent');
 const pg = require('pg');
+const { response } = require('express');
 require('dotenv').config();
 
 
@@ -26,23 +27,27 @@ app.get('/location', function (req, res) {
         console.log(data.rows);
         res.send(data.rows[0]);
       } else {
-        const GEOCODE_API_KEY = process.env.GEOCODE_API;
-        const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${req.query.city}&format=json`;
+        try {const GEOCODE_API_KEY = process.env.GEOCODE_API;
+          const url = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${req.query.city}&format=json`;
 
-        superagent.get(url).then(returnInformation => {
-          const locationData = returnInformation.body[0];
-          const instanceOfLocation = new Location(locationData, req.query.city);
-          client.query(
-            `INSERT INTO location
+          superagent.get(url).then(returnInformation => {
+            const locationData = returnInformation.body[0];
+            const instanceOfLocation = new Location(locationData, req.query.city);
+            client.query(
+              `INSERT INTO location
           (search_query, latitude, longitude)
-          VALUES ($1, $2, $3)`, [req.query.city, instanceOfLocation.latitude, instanceOfLocation.longitude])
-            .then(() => {
-              res.send(instanceOfLocation);
+          VALUES ($1, $2, $3, $4)`, [req.query.city, instanceOfLocation.formatted_query, instanceOfLocation.latitude, instanceOfLocation.longitude])
+              .then(() => {
+                res.send(instanceOfLocation);
 
-            });
+              });
 
-        })
-          .catch(error => console.log(error));
+          });
+        }
+        catch(error){
+          console.error(error);
+          res.status(404).send("sorry city invalid");
+        }
       }
     });
 });
@@ -106,9 +111,9 @@ function Trail(trail) {
   this.star_votes = trail.starVotes;
 }
 
-app.use('*', (request, response) => {
-  response.status(404).send('I am sorry, the city you have entered is invalid.');
-});
+// app.use('*', (request, response) => {
+//   response.status(404).send('I am sorry, the city you have entered is invalid.');
+// });
 
 
 client.connect()
