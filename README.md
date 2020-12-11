@@ -5,7 +5,7 @@
 **Version**: 1.0.2 
 
 ## Overview
-The City Explorer is a web page that allows the user to input a city and in turn receive geographic information such as a map and latitude and longitude. The explorer app also returns weather data and restaurants information for the location
+The City Explorer is a web page that allows the user to input a city and in turn receive geographic information such as a map and latitude and longitude. The explorer app also returns weather data, hiking trail data, and restaurant information for the location
 
 ## Getting Started
 To get this app running one must create a backend platform that will intake a city search query and return the above specified information
@@ -22,7 +22,7 @@ This program is utilizing JavaScript and API calls to yelp, locationIQ, Hiking P
 12-07-2020 4:30pm - Application now utilizes Postgres SQL to store location information of previously queried cities for future use to minimize API calls
 
  ## Credits and Collaborations
-Codefellows TA's Bade, Brai, Chance and Skyler
+Codefellows TA's Bade, Brai, Chance, Skyler, and Ashlyn
 Fellow Students Nick Abramowicz, Alan Hung, William Moreno, Nick Magruder
 
 
@@ -55,3 +55,13 @@ Start time: 2:00PM
 Finish time: 4:30PM
 
 Actual time needed to complete: 2.5 Hours
+
+Number and name of feature: Day 4: 3 features; Add API calls for movies, add API calls for yelp, and create pagination for yelp results
+
+Estimate of time needed to complete: 4 hours
+
+Start time: 2:00PM
+
+Finish time: 6:15PM
+
+Actual time needed to complete: 4.25 Hours

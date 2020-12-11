@@ -23,7 +23,6 @@ app.get('/location', function (req, res) {
   client.query('SELECT * FROM location WHERE search_query=$1', [req.query.city])
     .then(data => {
       if (data.rows.length > 0) {
-        console.log(data.rows);
         res.send(data.rows[0]);
       } else {
         const GEOCODE_API_KEY = process.env.GEOCODE_API;
@@ -42,7 +41,10 @@ app.get('/location', function (req, res) {
             });
 
         })
-          .catch(error => console.log(error));
+          .catch(error => {
+            res.status(404).send('I am sorry, the city you have entered is invalid.');
+            console.log(error);
+          });
       }
     });
 });
@@ -58,8 +60,8 @@ app.get('/weather', function (req, res) {
       days: 8
     })
     .then(returnInformation => {
-      const weatherData = returnInformation.body;
-      const weatherDataArray = weatherData.data.map(instance => new Weather(instance));
+      const weatherData = returnInformation.body.data;
+      const weatherDataArray = weatherData.map(instance => new Weather(instance));
       res.send(weatherDataArray);
     }).catch(error => console.log(error));
 });
@@ -73,27 +75,51 @@ app.get('/trails', function (req, res) {
       lon: req.query.longitude,
     })
     .then(returnInformation => {
-      const trailData = returnInformation.body;
-      const trailDataArray = trailData.trails.map(instance => new Trail(instance));
+      const trailData = returnInformation.body.trails;
+      const trailDataArray = trailData.map(instance => new Trail(instance));
       res.send(trailDataArray);
     }).catch(error => console.log(error));
 });
 
 app.get('/movies', function (req, res) {
   const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
-  superagent.get('https://api.themoviedb.org/3/movie/popular')
+  superagent.get('https://api.themoviedb.org/3/search/movie')
     .query({
       api_key: MOVIE_API_KEY,
       language: 'en-US',
-      page : '1'
+      page : '1',
+      query: req.query.search_query
     })
     .then(returnInformation => {
       const movieData = returnInformation.body.results;
       const movieDataArray = movieData.map(instance => new Movie(instance));
       res.send(movieDataArray);
-      // const trailData = returnInformation.body;
-      // const trailDataArray = trailData.trails.map(instance => new Trail(instance));
-      // res.send(trailDataArray);
+    }).catch(error => console.log(error));
+});
+
+app.get('/yelp', function (req, res) {
+  const YELP_API_KEY = process.env.YELP_API_KEY;
+  superagent.get('https://api.yelp.com/v3/businesses/search')
+    .set('Authorization', `Bearer ${YELP_API_KEY}`)
+    .query({
+      term: 'restaurants',
+      latitude: req.query.latitude,
+      longitude: req.query.longitude,
+      limit: '20',
+    })
+    .then(returnInformation => {
+      const yelpData = returnInformation.body.businesses;
+      const yelpDataArray = yelpData.map(instance => new Restaurant(instance));
+      if( req.query.page === '1'){
+        res.send(yelpDataArray.slice(0,5));
+      } else if(req.query.page === '2'){
+        console.log('hello');
+        res.send(yelpDataArray.slice(5,10));
+      } else if(req.query.page === '3'){
+        res.send(yelpDataArray.slice(10,15));
+      } else {
+        res.send(yelpDataArray.slice(15,20));
+      }
     }).catch(error => console.log(error));
 });
 
@@ -132,6 +158,15 @@ function Movie(movie) {
   this.released_on = movie.release_date;
 }
 
+function Restaurant(restaurant){
+  this.name = restaurant.name || 'Not Listed';
+  this.image_url = restaurant.image_url || 'Not Listed';
+  this.price = restaurant.price || 'Not Listed';
+  this.rating = restaurant.rating || 'Not Listed';
+  this.url = restaurant.url || 'Not Listed';
+}
+
+
 app.use('*', (request, response) => {
   response.status(404).send('I am sorry, the city you have entered is invalid.');
 });
@@ -142,3 +177,4 @@ client.connect()
     app.listen(PORT, () => console.log(`server is up on port: ${PORT}`));
   })
   .catch(error => console.error(error));
+
