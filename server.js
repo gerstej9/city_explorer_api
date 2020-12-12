@@ -40,12 +40,11 @@ app.get('/location', function (req, res) {
 
             });
 
-        })
-          .catch(error => {
-            res.status(404).send('I am sorry, the city you have entered is invalid.');
-            console.log(error);
-          });
+        });
       }
+    }).catch(error => {
+      res.status(500).send('I am sorry, something has gone wrong');
+      console.log(error);
     });
 });
 
@@ -63,7 +62,10 @@ app.get('/weather', function (req, res) {
       const weatherData = returnInformation.body.data;
       const weatherDataArray = weatherData.map(instance => new Weather(instance));
       res.send(weatherDataArray);
-    }).catch(error => console.log(error));
+    }).catch(error => {
+      res.status(500).send('I am sorry, something has gone wrong');
+      console.log(error);
+    });
 });
 
 app.get('/trails', function (req, res) {
@@ -78,7 +80,10 @@ app.get('/trails', function (req, res) {
       const trailData = returnInformation.body.trails;
       const trailDataArray = trailData.map(instance => new Trail(instance));
       res.send(trailDataArray);
-    }).catch(error => console.log(error));
+    }).catch(error => {
+      res.status(500).send('I am sorry, something has gone wrong');
+      console.log(error);
+    });
 });
 
 app.get('/movies', function (req, res) {
@@ -94,7 +99,10 @@ app.get('/movies', function (req, res) {
       const movieData = returnInformation.body.results;
       const movieDataArray = movieData.map(instance => new Movie(instance));
       res.send(movieDataArray);
-    }).catch(error => console.log(error));
+    }).catch(error => {
+      res.status(500).send('I am sorry, something has gone wrong');
+      console.log(error);
+    });
 });
 
 app.get('/yelp', function (req, res) {
@@ -120,7 +128,10 @@ app.get('/yelp', function (req, res) {
       } else {
         res.send(yelpDataArray.slice(15,20));
       }
-    }).catch(error => console.log(error));
+    }).catch(error => {
+      res.status(500).send('I am sorry, something has gone wrong');
+      console.log(error);
+    });
 });
 
 
