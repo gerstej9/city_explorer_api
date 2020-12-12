@@ -88,7 +88,7 @@ app.get('/trails', function (req, res) {
 
 app.get('/movies', function (req, res) {
   const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
-  superagent.get('https://cors-anywhere.herokuapp.com/https://api.themoviedb.org/3/search/movie')
+  superagent.get('https://api.themoviedb.org/3/search/movie')
     .query({
       api_key: MOVIE_API_KEY,
       language: 'en-US',
@@ -107,7 +107,7 @@ app.get('/movies', function (req, res) {
 
 app.get('/yelp', function (req, res) {
   const YELP_API_KEY = process.env.YELP_API_KEY;
-  superagent.get('https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search')
+  superagent.get('https://api.yelp.com/v3/businesses/search')
     .set('Authorization', `Bearer ${YELP_API_KEY}`)
     .query({
       term: 'restaurants',
@@ -164,7 +164,7 @@ function Movie(movie) {
   this.title = movie.original_title;
   this. overview = movie.overview;
   this. average_votes = movie.vote_average;
-  this.image_url = `https://cors-anywhere.herokuapp.com/https://image.tmdb.org/t/p/w500${movie.poster_path}` || '(No Image Available)';
+  this.image_url = `https://image.tmdb.org/t/p/w500${movie.poster_path}` || '(No Image Available)';
   this.popularity = movie.popularity;
   this.released_on = movie.release_date;
 }
